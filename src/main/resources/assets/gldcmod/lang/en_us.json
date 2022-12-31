@@ -1,6 +1,12 @@
 {
-  "item.gldcmod.blade_of_fifa": "Blade of Fifa",
+  "item.gldcmod.blade_of_fifa": "§4§lBlade §1§lof §4§lFifa",
   "item.gldcmod.kratos_messi_spawn_egg": "Kratos Messi Spawn Egg",
+  "item.gldcmod.crimson_bone" : "§4§lCrimson Bone",
+  "item.gldcmod.sword_of_fire" : "§6§lSword of Fire",
+  "block.gldcmod.godly_skull" : "§4§lGodly Skull",
   "entity.gldcmod.kratos_messi": "Kratos Messi",
-  "entity.gldcmod.divine_retribution": "Divine Retribution"
+  "entity.gldcmod.divine_retribution": "Divine Retribution",
+  "key.category.gldcmod.utility": "Utilities for Gold Capital",
+  "key.gldcmod.use_ability": "Use ability"
+
 }

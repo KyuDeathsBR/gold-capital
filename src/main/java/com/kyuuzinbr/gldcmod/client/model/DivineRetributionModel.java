@@ -14,7 +14,7 @@ import static com.kyuuzinbr.gldcmod.GldcMod.MODID;
 
 public class DivineRetributionModel extends EntityModel<DivineRetribution> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(MODID, "divineretributionmodel"), "main");
+	public static ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(MODID, "divineretributionmodel"), "main");
 	private final ModelPart Ball;
 
 	public DivineRetributionModel(ModelPart root) {

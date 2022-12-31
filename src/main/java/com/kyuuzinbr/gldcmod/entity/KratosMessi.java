@@ -1,17 +1,14 @@
 package com.kyuuzinbr.gldcmod.entity;
 
 import com.kyuuzinbr.gldcmod.entity.ai.goal.kratosmessi.JumpAttackGoal;
-import com.kyuuzinbr.gldcmod.items.BladeOfFIFA;
+import com.kyuuzinbr.gldcmod.items.common.BladeOfFIFA;
 import com.kyuuzinbr.gldcmod.items.data.DivineRetributionAbility;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.bossevents.CustomBossEvent;
-import net.minecraft.server.bossevents.CustomBossEvents;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -19,6 +16,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
@@ -30,7 +28,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -51,6 +48,10 @@ public class KratosMessi extends PathfinderMob implements IAnimatable {
     private AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
     private static final EntityDataAccessor<Boolean> DATA_IS_JUMPATTACKING = SynchedEntityData.defineId(KratosMessi.class, EntityDataSerializers.BOOLEAN);
+
+    public boolean isJumpattacking() {
+        return this.getEntityData().get(DATA_IS_JUMPATTACKING);
+    }
 
     ItemStack selecteditem = new ItemStack(BLADE_OF_FIFA.get());
 
@@ -82,18 +83,20 @@ public class KratosMessi extends PathfinderMob implements IAnimatable {
     public KratosMessi(EntityType<? extends PathfinderMob> entity, Level level) {
         super(entity, level);
         BladeOfFIFA item = (BladeOfFIFA) this.selecteditem.getItem();
-        item.setAbilities(List.of(new DivineRetributionAbility()),this.selecteditem,false);
         item.setHiddenAbilities(List.of(new DivineRetributionAbility()),this.selecteditem,false);
+        item.addAbility(0,this.selecteditem);
         this.selecteditem.getTag().putInt("xp",0);
-        this.selecteditem.getTag().putInt("level",1);
+        this.selecteditem.getTag().putInt("level",2);
+        this.selecteditem.addAttributeModifier(Attributes.ATTACK_DAMAGE, new AttributeModifier("Weapon Modifier", item.getDefaultAttackDamage() + (item.Level(this.selecteditem) * 2), AttributeModifier.Operation.ADDITION), EquipmentSlot.MAINHAND);
+
     }
 
     protected void registerGoals() {
-        this.goalSelector.addGoal(1, new JumpAttackGoal(this));
-        this.goalSelector.addGoal(1, new MeleeAttackGoal(this,1.2D,false));
-        this.goalSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class,true));
-        this.goalSelector.addGoal(3, new RandomStrollGoal(this,1D));
-        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal( 1, new JumpAttackGoal(this));
+        this.goalSelector.addGoal(2, new MeleeAttackGoal(this,1.2D,false));
+        this.goalSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class,true));
+        this.goalSelector.addGoal(4, new RandomStrollGoal(this,1D));
+        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
     }
 
     private final ServerBossEvent bossEvent = (ServerBossEvent)(new ServerBossEvent(this.getDisplayName(), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.PROGRESS));
@@ -159,6 +162,7 @@ public class KratosMessi extends PathfinderMob implements IAnimatable {
 
     }
 
+
     @Override
     public HumanoidArm getMainArm() {
         return null;
@@ -179,6 +183,7 @@ public class KratosMessi extends PathfinderMob implements IAnimatable {
     public void registerControllers(AnimationData data) {
         data.addAnimationController(new AnimationController(this, "controller", 0, this::predicate));
         data.addAnimationController(new AnimationController(this, "attackcontroller", 0, this::attackPredicate));
+        data.addAnimationController(new AnimationController(this, "jumpattackcontroller", 0, this::jumpAttackPredicate));
     }
 
     @Override
@@ -186,29 +191,21 @@ public class KratosMessi extends PathfinderMob implements IAnimatable {
         return this.factory;
     }
 
-    private PlayState attackPredicate(AnimationEvent event) {
-        if (this.swinging && event.getController().getAnimationState().equals(AnimationState.Stopped)) {
+    private <E extends KratosMessi & IAnimatable> PlayState attackPredicate(AnimationEvent<E> event) {
+        if (event.getAnimatable().swinging && event.getController().getAnimationState().equals(AnimationState.Stopped)) {
             event.getController().markNeedsReload();
             event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.kratos_messi.attack", ILoopType.EDefaultLoopTypes.PLAY_ONCE));
-            this.swinging = false;
-        }
-        if (event.getController().getCurrentAnimation() != null) {
-            if (this.entityData.get(DATA_IS_JUMPATTACKING) && event.getController().getCurrentAnimation().animationName != "animation.kratos_messi.jumpattack") {
-                event.getController().setAnimation(new AnimationBuilder().playOnce("animation.kratos_messi.jumpattack"));
-                this.setJumpattacking(false);
-            }
-
-            if (event.getController().getCurrentAnimation().animationName.equals("animation.kratosmessi.jumpattack")) {
-                if (event.getAnimationTick() == 11.6D && this.getMainHandItem().is(BLADE_OF_FIFA.get())) {
-                    BladeOfFIFA bladeOfFIFA = (BladeOfFIFA) this.getMainHandItem().getItem();
-                    bladeOfFIFA.getAbilities(this.selecteditem).get(0).onUsedEntity(this.level, this, new Vec3(0, 3.875, 0), -60F);
-                }
-                if (event.getAnimationTick() == event.getController().getCurrentAnimation().animationLength - 0.1D) {
-                    System.out.println("Completed Jump Attack");
-                }
-            }
+            event.getAnimatable().swinging = false;
         }
 
+        return PlayState.CONTINUE;
+    }
+
+    private <E extends KratosMessi & IAnimatable> PlayState jumpAttackPredicate(AnimationEvent<E> event) {
+        if (event.getAnimatable().isJumpattacking() && event.getController().getAnimationState().equals(AnimationState.Stopped)) {
+            event.getController().markNeedsReload();
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.kratos_messi.jumpattack", ILoopType.EDefaultLoopTypes.PLAY_ONCE));
+        }
         return PlayState.CONTINUE;
     }
 

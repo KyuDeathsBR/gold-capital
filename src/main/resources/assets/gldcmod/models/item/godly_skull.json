@@ -1,0 +1,17 @@
+{
+  "parent": "gldcmod:block/godly_skull",
+  "display": {
+    "thirdperson_righthand": {
+      "scale": [ 1.5, 1.5, 1.5 ]
+    },
+    "thirdperson_lefthand": {
+      "scale": [ 1.5, 1.5, 1.5 ]
+    },
+    "firstperson_righthand": {
+      "scale": [ 1.2, 1.2, 1.2 ]
+    },
+    "firstperson_lefthand": {
+      "scale": [ 1.2, 1.2, 1.2 ]
+    }
+  }
+}

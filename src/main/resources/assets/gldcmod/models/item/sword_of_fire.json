@@ -1,0 +1,6 @@
+{
+  "parent": "gldcmod:item/large_handheld",
+  "textures": {
+    "layer0": "gldcmod:item/sword_of_fire"
+  }
+}

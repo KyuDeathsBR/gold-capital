@@ -1,0 +1,85 @@
+{
+	"credit": "Made with Blockbench",
+	"parent": "minecraft:block/orientable",
+	"texture_size": [64, 32],
+	"textures": {
+		"0": "gldcmod:item/godly_skull",
+		"particle": "gldcmod:item/godly_skull"
+	},
+	"elements": [
+		{
+			"from": [3, 0, 2],
+			"to": [13, 1, 12],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 0, 7]},
+			"faces": {
+				"north": {"uv": [2.5, 6, 5, 6.5], "texture": "#0"},
+				"east": {"uv": [0, 6, 2.5, 6.5], "texture": "#0"},
+				"south": {"uv": [7.5, 6, 10, 6.5], "texture": "#0"},
+				"west": {"uv": [5, 6, 7.5, 6.5], "texture": "#0"},
+				"up": {"uv": [5, 6, 2.5, 1], "texture": "#0"},
+				"down": {"uv": [7.5, 1, 5, 6], "texture": "#0"}
+			}
+		},
+		{
+			"from": [12.5, 0.1441, 4.10208],
+			"to": [13, 6.8941, 12.10208],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 1, 12]},
+			"faces": {
+				"north": {"uv": [14, 4, 14, 7], "texture": "#0"},
+				"east": {"uv": [12, 4, 14, 7], "texture": "#0"},
+				"south": {"uv": [16, 4, 16, 7], "texture": "#0"},
+				"west": {"uv": [14, 4, 16, 7], "texture": "#0"},
+				"up": {"uv": [14, 4, 14, 0], "texture": "#0"},
+				"down": {"uv": [14, 0, 14, 4], "texture": "#0"}
+			}
+		},
+		{
+			"from": [3, 0.1441, 4.10208],
+			"to": [3.5, 6.8941, 12.10208],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 1, 12]},
+			"faces": {
+				"north": {"uv": [14, 4, 14, 7], "texture": "#0"},
+				"east": {"uv": [12, 4, 14, 7], "texture": "#0"},
+				"south": {"uv": [16, 4, 16, 7], "texture": "#0"},
+				"west": {"uv": [14, 4, 16, 7], "texture": "#0"},
+				"up": {"uv": [14, 4, 14, 0], "texture": "#0"},
+				"down": {"uv": [14, 0, 14, 4], "texture": "#0"}
+			}
+		},
+		{
+			"from": [3, 3.57288, 1.56924],
+			"to": [13, 12.57288, 11.56924],
+			"rotation": {"angle": 22.5, "axis": "x", "origin": [0, 1, 5]},
+			"faces": {
+				"north": {"uv": [2.5, 11.5, 5, 16], "texture": "#0"},
+				"east": {"uv": [0, 11.5, 2.5, 16], "texture": "#0"},
+				"south": {"uv": [7.5, 11.5, 10, 16], "texture": "#0"},
+				"west": {"uv": [5, 11.5, 7.5, 16], "texture": "#0"},
+				"up": {"uv": [5, 11.5, 2.5, 6.5], "texture": "#0"},
+				"down": {"uv": [7.5, 6.5, 5, 11.5], "texture": "#0"}
+			}
+		}
+	],
+	"groups": [
+		{
+			"name": "Main",
+			"origin": [0, 0, 0],
+			"color": 0,
+			"children": [
+				{
+					"name": "LowerJaw",
+					"origin": [0, 0, 0],
+					"color": 0,
+					"children": [0, 1, 2]
+				},
+				{
+					"name": "UpperJaw",
+					"origin": [0, 1, 5],
+					"rotation": [-5, 0, 0],
+					"color": 0,
+					"children": [3]
+				}
+			]
+		}
+	]
+}

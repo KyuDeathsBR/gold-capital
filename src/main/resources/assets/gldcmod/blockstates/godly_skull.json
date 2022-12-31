@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north" : {
+     "model" : "gldcmod:block/godly_skull"
+    },
+    "facing=east" : {
+      "model" : "gldcmod:block/godly_skull",
+      "y": 90
+    },
+    "facing=south" : {
+      "model" : "gldcmod:block/godly_skull",
+      "y": 180
+    },
+    "facing=west" : {
+      "model" : "gldcmod:block/godly_skull",
+      "y": 270
+    }
+  }
+}

@@ -1,6 +1,7 @@
 package com.kyuuzinbr.gldcmod.entity;
 
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
@@ -19,11 +20,16 @@ import static com.kyuuzinbr.gldcmod.GLDCModRegistries.GLDCModParticleRegistry.DI
 public class DivineRetribution extends AbstractHurtingProjectile {
 
     private boolean hasBeenShot;
+    private float strength;
 
     // This is the constructor that uses the protected constructor of the Projectile class
     public DivineRetribution(EntityType<? extends DivineRetribution> type, Level level)
     {
         super(type, level);
+    }
+
+    public void setStrength(float val) {
+        strength = val;
     }
 
     private final ParticleOptions particle = DIVINE_RETRIBUTION_PARTICLE_TYPE.get();
@@ -59,8 +65,8 @@ public class DivineRetribution extends AbstractHurtingProjectile {
     @Override
     protected void onHitEntity(EntityHitResult hitResult) {
         {
-            if (!this.level.isClientSide) {
-                this.level.explode(this, this.getX(), this.getY(), this.getZ(), 10F, Explosion.BlockInteraction.NONE);
+            if (!this.level.isClientSide & !this.ownedBy(hitResult.getEntity()))  {
+                this.level.explode(this.getOwner(), null, null,  this.getX(), this.getY(), this.getZ(), 5F + strength,false, Explosion.BlockInteraction.NONE);
                 this.discard();
             }
         }
@@ -70,7 +76,7 @@ public class DivineRetribution extends AbstractHurtingProjectile {
     protected void onHitBlock(BlockHitResult hitResult) {
         {
             if (!this.level.isClientSide) {
-                this.level.explode(this, this.getX(), this.getY(), this.getZ(), 10F, Explosion.BlockInteraction.NONE);
+                this.level.explode(this.getOwner(), null, null,  this.getX(), this.getY(), this.getZ(), 5F + strength,false, Explosion.BlockInteraction.NONE);
                 this.discard();
             }
         }

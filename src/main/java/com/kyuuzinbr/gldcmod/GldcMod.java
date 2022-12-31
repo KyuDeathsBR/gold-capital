@@ -4,6 +4,7 @@ import com.kyuuzinbr.gldcmod.client.model.DivineRetributionModel;
 import com.kyuuzinbr.gldcmod.client.particle.DivineRetributionParticle;
 import com.kyuuzinbr.gldcmod.items.AbilityItem;
 import com.kyuuzinbr.gldcmod.items.data.Ability;
+import com.kyuuzinbr.gldcmod.networks.ModPackets;
 import com.mojang.logging.LogUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.particle.ParticleProvider;
@@ -53,6 +54,7 @@ public class GldcMod
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
 
+        GLDCModRegistries.GLDCModBlockRegistry.register(modEventBus);
         GLDCModRegistries.GLDCModEntityRegistry.register(modEventBus);
         GLDCModRegistries.GLDCModParticleRegistry.register(modEventBus);
         GLDCModRegistries.GLDCModItemRegistry.register(modEventBus);
@@ -65,6 +67,7 @@ public class GldcMod
 
     private void commonSetup(final FMLCommonSetupEvent event)
     {
+        event.enqueueWork(ModPackets::register);
         // Some common setup code
         LOGGER.info("HELLO FROM COMMON SETUP");
         LOGGER.info("DIRT BLOCK >> {}", ForgeRegistries.BLOCKS.getKey(Blocks.DIRT));
@@ -76,17 +79,5 @@ public class GldcMod
     {
         // Do something when the server starts
         LOGGER.info("HELLO from server starting");
-    }
-    @Mod.EventBusSubscriber(modid = MODID, bus= Mod.EventBusSubscriber.Bus.MOD,value = Dist.CLIENT)
-    public static class ClientModEvents {
-        @SubscribeEvent
-        public static void registerParticles(RegisterParticleProvidersEvent event)
-        {
-            event.register(DIVINE_RETRIBUTION_PARTICLE_TYPE.get(), set -> (ParticleProvider<SimpleParticleType>) (options, level, x, y, z, dx, dy, dz) -> new DivineRetributionParticle(level,x,y,z,set));
-        }
-        @SubscribeEvent
-        public static void registerLayerDefinition(EntityRenderersEvent.RegisterLayerDefinitions event) {
-            event.registerLayerDefinition(DivineRetributionModel.LAYER_LOCATION,DivineRetributionModel::createBodyLayer);
-        }
     }
 }
