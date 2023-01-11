@@ -33,8 +33,9 @@ public class BurstModel extends EntityModel<Burst> {
 	}
 
 	@Override
-	public void setupAnim(Burst entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-		Main.yRot = headPitch;
+	public void setupAnim(Burst entity, float limbSwing, float limbSwingAmount, float ageInTicks, float headYaw, float headPitch) {
+		Main.yRot = headPitch * ((float)Math.PI / 180F);
+		Main.xRot = headYaw * ((float)Math.PI / 180F);
 	}
 
 	@Override

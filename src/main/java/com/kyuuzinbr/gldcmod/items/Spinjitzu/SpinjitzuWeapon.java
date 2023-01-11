@@ -2,7 +2,7 @@ package com.kyuuzinbr.gldcmod.items.Spinjitzu;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.kyuuzinbr.gldcmod.items.AbilityItem;
-import com.kyuuzinbr.gldcmod.items.data.BurstAbility;
+import com.kyuuzinbr.gldcmod.items.data.elemental.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,13 +19,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.List;
 
 public class SpinjitzuWeapon extends AbilityItem {
-    public String element;
+    public Element element;
     private final int attackDamage;
     private final float attackSpeed;
     private final int durability;
-    public SpinjitzuWeapon(String element, int attackDamage, float attackSpeed, int durability) {
+    public SpinjitzuWeapon(int element, int attackDamage, float attackSpeed, int durability) {
         super(new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_COMBAT).durability(durability));
-        this.element = element;
+        this.element = Elements.from(element);
         this.attackDamage = attackDamage;
         this.attackSpeed = attackSpeed;
         this.durability = durability;
@@ -34,8 +34,10 @@ public class SpinjitzuWeapon extends AbilityItem {
         builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", (double)this.attackSpeed, AttributeModifier.Operation.ADDITION));
         this.defaultModifiers = builder.build();
         this.setAbilityUnlockTimes(new int[] {
-
-        });
+                2,
+                3,
+            }
+        );
     }
 
     @Override
@@ -43,11 +45,15 @@ public class SpinjitzuWeapon extends AbilityItem {
         super.fillItemCategory(tab, itemStacks);
         if (this.allowedIn(tab)) {
             ItemStack stack = itemStacks.get(itemStacks.size() - 1);
-            BurstAbility ability = new BurstAbility();
-            ability.setElement(this.element);
+            BurstAbility burstAbility = new BurstAbility();
+            BeamAbility beamAbility = new BeamAbility();
+            SlashAbility slashAbility = new SlashAbility(this.element);
+            burstAbility.setElement(this.element);
+            beamAbility.setElement(this.element);
+            slashAbility.setElement(this.element);
             System.out.println("Element: " + this.element);
-            this.setAbilities(List.of(ability),stack,false);
-
+            this.setAbilities(List.of(burstAbility),stack,false);
+            this.setHiddenAbilities(List.of(beamAbility,slashAbility),stack,false);
         }
     }
     public boolean canAttackBlock(BlockState block, Level level, BlockPos blockPos, Player player) {

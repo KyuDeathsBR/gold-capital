@@ -2,9 +2,10 @@ plugins {
     id 'eclipse'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '5.1.+'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
 
-version = '1.19.2-0.0.2'
+version = '1.19.2-0.0.3B-1'
 group = 'com.kyuuzinbr.gldcmod' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'gldcmod'
 
@@ -26,7 +27,7 @@ minecraft {
     //
     // Use non-default mappings at your own risk. They may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: 'official', version: '1.19.2'
+    mappings channel: 'parchment', version: '2022.11.27-1.19.2'
 
     // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg') // Currently, this location cannot be changed from the default.
 
@@ -128,6 +129,7 @@ repositories {
         url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
     }
 
+
 }
 
 dependencies {
@@ -153,9 +155,9 @@ dependencies {
 jar {
     manifest {
         attributes([
-                "Specification-Title"     : "Gold Capital Mod",
+                "Specification-Title"     : "Gold Capital",
                 "Specification-Vendor"    : "KyuuzinBR_",
-                "Specification-Version"   : "1.19.2-0.0.2",
+                "Specification-Version"   : "1.19.2-0.0.3B-1",
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : project.jar.archiveVersion,
                 "Implementation-Vendor"   : "KyuuzinBR_",

@@ -1,9 +1,7 @@
 package com.kyuuzinbr.gldcmod;
 
 import com.kyuuzinbr.gldcmod.blocks.GodlySkullBlock;
-import com.kyuuzinbr.gldcmod.entity.Burst;
-import com.kyuuzinbr.gldcmod.entity.DivineRetribution;
-import com.kyuuzinbr.gldcmod.entity.KratosMessi;
+import com.kyuuzinbr.gldcmod.entity.*;
 import com.kyuuzinbr.gldcmod.items.Spinjitzu.SwordOfFire;
 import com.kyuuzinbr.gldcmod.items.common.BladeOfFIFA;
 import com.kyuuzinbr.gldcmod.items.CrimsonBone;
@@ -49,6 +47,17 @@ public class GLDCModRegistries {
                 .sized(1F,2F)
                 .build(new ResourceLocation(MODID,"burst").toString())
                 );
+        public static final RegistryObject<EntityType<Beam>> BEAM = ENTITY_TYPES
+                .register("beam",() -> EntityType.Builder
+                        .of((EntityType<Beam> beam, Level level) -> new Beam(beam,level,null),MobCategory.MISC)
+                        .sized(1F,2F)
+                        .build(new ResourceLocation(MODID,"beam").toString())
+                );
+
+        public static final RegistryObject<EntityType<Slash>> SLASH = ENTITY_TYPES.register("slash",() -> EntityType.Builder
+                .of((EntityType<Slash> slash, Level level) -> new Slash(slash,level,null),MobCategory.MISC)
+                .sized(1f,0.15f)
+                .build(new ResourceLocation(MODID,"slash").toString()));
         public static void register(IEventBus bus) {
             ENTITY_TYPES.register(bus);
         }

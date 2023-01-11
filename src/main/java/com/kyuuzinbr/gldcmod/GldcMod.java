@@ -5,6 +5,8 @@ import com.kyuuzinbr.gldcmod.client.particle.DivineRetributionParticle;
 import com.kyuuzinbr.gldcmod.items.AbilityItem;
 import com.kyuuzinbr.gldcmod.items.data.Ability;
 import com.kyuuzinbr.gldcmod.networks.ModPackets;
+import com.kyuuzinbr.gldcmod.tooltip.AttackComponent;
+import com.kyuuzinbr.gldcmod.tooltip.LockedComponent;
 import com.mojang.logging.LogUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.particle.ParticleProvider;
@@ -58,6 +60,8 @@ public class GldcMod
         GLDCModRegistries.GLDCModEntityRegistry.register(modEventBus);
         GLDCModRegistries.GLDCModParticleRegistry.register(modEventBus);
         GLDCModRegistries.GLDCModItemRegistry.register(modEventBus);
+        LockedComponent.registerFactory();
+        AttackComponent.registerFactory();
 
         GeckoLib.initialize();
 

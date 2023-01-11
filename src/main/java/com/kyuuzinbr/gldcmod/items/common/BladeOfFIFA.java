@@ -27,7 +27,7 @@ public class BladeOfFIFA extends AbilityItem {
     private final int durability;
 
     public BladeOfFIFA() {
-        this(20,-0.6F,40000);
+        this(40,-0.6F,40000);
     }
 
     public BladeOfFIFA(int attackDamage, float attackSpeed, int durability) {
@@ -35,6 +35,7 @@ public class BladeOfFIFA extends AbilityItem {
         this.attackDamage = attackDamage;
         this.attackSpeed = attackSpeed;
         this.durability = durability;
+        this.baseDamageMultiplier = 4;
         ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
         builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", (double)this.attackDamage, AttributeModifier.Operation.ADDITION));
         builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", (double)this.attackSpeed, AttributeModifier.Operation.ADDITION));

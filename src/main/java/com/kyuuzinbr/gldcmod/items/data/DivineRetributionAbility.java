@@ -16,23 +16,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
+import static com.kyuuzinbr.gldcmod.util.EntityUtil.getDistanceVector;
+
 public class DivineRetributionAbility extends Ability{
     public DivineRetributionAbility() {
-        super("Divine Retribution", ChatFormatting.DARK_BLUE,"Creates an almighty blast of divine retribution and launches it onto someone.",ChatFormatting.DARK_RED,true,5,0.25F);
-    }
-
-    protected final Vec3 calculateViewVector(float x, float y) {
-        float f = x * ((float)Math.PI / 180F);
-        float f1 = -y * ((float)Math.PI / 180F);
-        float f2 = Mth.cos(f1);
-        float f3 = Mth.sin(f1);
-        float f4 = Mth.cos(f);
-        float f5 = Mth.sin(f);
-        return new Vec3((double)(f3 * f4), (double)(-f5), (double)(f2 * f4));
-    }
-
-    public Vec3 getDistanceVector(Entity entity, float offset) {
-        return this.calculateViewVector(entity.getXRot() + offset,entity.getYRot()).multiply(2,2,2);
+        super("Divine Retribution",60, ChatFormatting.DARK_BLUE,"Creates an almighty blast of divine retribution and launches it onto someone.",ChatFormatting.DARK_RED,true,5,0.25F);
     }
 
     @Override
@@ -40,7 +28,7 @@ public class DivineRetributionAbility extends Ability{
 
         ItemStack stack = player.getMainHandItem().getItem() instanceof BladeOfFIFA bladeOfFIFA ? player.getMainHandItem() : player.getOffhandItem();
         BladeOfFIFA item = (BladeOfFIFA) stack.getItem();
-        if (!level.isClientSide()) {
+        if (!level.isClientSide() && !this.using) {
             EntityType<DivineRetribution> type = GLDCModRegistries.GLDCModEntityRegistry.DIVINE_RETRIBUTION.get();
             DivineRetribution divineRetribution = new DivineRetribution(type, level);
             divineRetribution.setStrength(item.getDamageModifier(stack) - item.getDefaultAttackDamage());
@@ -49,11 +37,10 @@ public class DivineRetributionAbility extends Ability{
             divineRetribution.setOwner(player);
             divineRetribution.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 3.0F, 3.0F);
 
-
+            this.using = true;
             player.awardStat(Stats.ITEM_USED.get(item));
             level.addFreshEntity(divineRetribution);
         }
-        player.getCooldowns().addCooldown(item,60);
         return InteractionResultHolder.success(player.getItemInHand(hand));
     }
 

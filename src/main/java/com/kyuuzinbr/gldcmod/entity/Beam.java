@@ -3,6 +3,7 @@ package com.kyuuzinbr.gldcmod.entity;
 import com.kyuuzinbr.gldcmod.items.Spinjitzu.SpinjitzuWeapon;
 import com.kyuuzinbr.gldcmod.items.data.elemental.Element;
 import com.kyuuzinbr.gldcmod.items.data.elemental.Elements;
+import com.kyuuzinbr.gldcmod.util.EntityUtil;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -14,12 +15,15 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.network.NetworkHooks;
 
@@ -27,9 +31,9 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.UUID;
 
-public class Burst extends Entity implements IEntityAdditionalSpawnData {
+public class Beam extends Entity implements IEntityAdditionalSpawnData {
     Entity cachedOwner = null;
-    private static final EntityDataAccessor<Optional<UUID>> DATA_OWNER_UUID = SynchedEntityData.defineId(Burst.class,EntityDataSerializers.OPTIONAL_UUID);
+    private static final EntityDataAccessor<Optional<UUID>> DATA_OWNER_UUID = SynchedEntityData.defineId(Burst.class, EntityDataSerializers.OPTIONAL_UUID);
 
     int currentTick = 0;
 
@@ -37,7 +41,7 @@ public class Burst extends Entity implements IEntityAdditionalSpawnData {
 
     private static final EntityDataAccessor<Integer> DATA_ELEMENT = SynchedEntityData.defineId(Burst.class,EntityDataSerializers.INT);
 
-    public UUID ownerUUID() {
+	public UUID ownerUUID() {
         return this.entityData.get(DATA_OWNER_UUID).get();
     }
 
@@ -63,7 +67,7 @@ public class Burst extends Entity implements IEntityAdditionalSpawnData {
         return this.getEntityData().get(DATA_ELEMENT);
     }
 
-    public Burst(EntityType<Burst> type, Level level,@Nullable Entity owner) {
+    public Beam(EntityType<Beam> type, Level level, @Nullable Entity owner) {
         super(type, level);
         this.setOwner(owner);
     }
@@ -93,22 +97,29 @@ public class Burst extends Entity implements IEntityAdditionalSpawnData {
         super.tick();
         LivingEntity owner = (LivingEntity) this.getOwner();
         currentTick++;
-        this.setYRot(this.getYRot() + 5F);
-        for (int i = 0; i < 15; i++) {
-            if (this.getElement() == Element.FIRE.toInt()) {
-                this.level.addParticle(ParticleTypes.FLAME, getX() + (random.nextDouble() * 2.5D - 1.25), getY() + (random.nextDouble() * 3.5D), getZ() + (random.nextDouble() * 2.5D - 1.25), random.nextDouble() * 0.1 - 0.05, 0.05D, random.nextDouble() * 0.1 - 0.05);
+        EntityHitResult hitResult = null;
+
+        if (owner != null) {
+            Vec3 baseDistance = owner.position().add(EntityUtil.getDistanceVector(owner,1D));
+            Vec3 distance = owner.position().add(EntityUtil.getDistanceVector(owner,3D));
+            Vec3 delta = distance.add(this.position().multiply(-1,-1,-1));
+            if (owner instanceof Player player) {
+                hitResult = EntityUtil.getPlayerPOVHitResult(player, 160D);
             }
-        }
-        if (currentTick % 10 == 0) {
-            for (Entity entity : level.getNearbyEntities(LivingEntity.class, TargetingConditions.DEFAULT, owner, new AABB(position().x - 2.0D, position().y, position().z - 2.0D, position().x + 2.0D, position().y + 3.0D, position().z + 2.0D))) {
-                if (!ownedBy(entity) || (entity instanceof Player player && !(player.isCreative() && player.isSpectator()))) {
-                    entity.setSecondsOnFire(1);
-                    entity.hurt(DamageSource.GENERIC, (strength / 4));
+            if (currentTick % 10 == 0) {
+                if (hitResult != null) {
+                    hitResult.getEntity().hurt(DamageSource.GENERIC,strength);
+                    hitResult.getEntity().setSecondsOnFire(1);
                 }
             }
-        }
-        if (owner != null) {
-            this.setPos(owner.getX(), owner.getY(), owner.getZ());
+            this.setPos(baseDistance.x(),baseDistance.y(),baseDistance.z());
+            this.setXRot(-owner.getXRot());
+            this.setYRot(owner.getYHeadRot());
+            for (int i = 0; i < 15; i++) {
+                if (this.getElement() == Element.FIRE.toInt()) {
+                    this.level.addParticle(ParticleTypes.FLAME, getX() + random.nextDouble(), getY() + random.nextDouble(), getZ() + random.nextDouble(),0D,0D,0.05D);
+                }
+            }
             if (!(owner.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof SpinjitzuWeapon)) {
                 this.discard();
             }
